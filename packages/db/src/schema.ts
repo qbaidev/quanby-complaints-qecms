@@ -4,12 +4,14 @@ import * as t from "drizzle-orm/pg-core"
 const createTable = pgTableCreator(name => name)
 
 // ── Auth tables ────────────────────────────────────────────────────────────────
+// Roles: admin, commissioner, division_chief, case_investigator, complaints_officer, complainant, respondent
 export const users = createTable("users", {
 	id: t.text("id").primaryKey(),
 	name: t.text("name").notNull(),
 	email: t.text("email").notNull().unique(),
 	emailVerified: t.boolean("email_verified").notNull().default(false),
 	image: t.text("image"),
+	role: t.text("role").notNull().default("complaints_officer"),
 	createdAt: t.timestamp("created_at").notNull().defaultNow(),
 	updatedAt: t.timestamp("updated_at").notNull().defaultNow(),
 })
