@@ -62,6 +62,15 @@ export function createAuth(): ReturnType<typeof betterAuth> {
 		}),
 		basePath: AUTH_BASE_PATH,
 		secret: authEnv.BETTER_AUTH_SECRET,
+		user: {
+			additionalFields: {
+				role: {
+					type: "string",
+					defaultValue: "complaints_officer",
+					input: true,
+				},
+			},
+		},
 		emailAndPassword: {
 			enabled: true,
 			requireEmailVerification: false,

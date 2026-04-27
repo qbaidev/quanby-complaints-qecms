@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { LayoutDashboard, FileText, Users, Building2, ScrollText, ShieldCheck } from "lucide-react"
+import { LayoutDashboard, FileText, Users, Building2, ScrollText } from "lucide-react"
 import { getSession } from "@/services/better-auth/auth-server"
 import { LogoutButton } from "@/core/components/logout-button"
-import { Badge } from "@/core/components/ui/badge"
+import { RoleProvider } from "@/core/context/role-context"
 
 const NAV = [
 	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -52,55 +52,58 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 	const role = (session.user as { role?: string })?.role ?? "complaints_officer"
 	const roleLabel = ROLE_LABELS[role] ?? role
 	const roleColor = ROLE_COLORS[role] ?? "bg-gray-500 text-white"
+	const userName = session.user?.name ?? session.user?.email ?? ""
 
 	return (
-		<div className="min-h-screen bg-background">
-			<header className="sticky top-0 z-40 border-b bg-primary text-primary-foreground shadow-sm">
-				<div className="flex h-14 items-center justify-between px-6">
-					<div className="flex items-center gap-3">
-						<NpcLogo className="h-8 w-8 text-primary-foreground" />
-						<div>
-							<p className="text-sm font-bold leading-none tracking-wide">NPC — QECMS</p>
-							<p className="text-xs opacity-70">Quanby Enterprise Complaints Management</p>
-						</div>
-					</div>
-					<div className="flex items-center gap-3">
-						<div className="flex flex-col items-end">
-							<span className="text-sm font-medium leading-none">{session.user?.name ?? session.user?.email}</span>
-							<span className={`mt-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${roleColor}`}>{roleLabel}</span>
-						</div>
-						<LogoutButton />
-					</div>
-				</div>
-			</header>
-
-			<div className="flex">
-				<aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 border-r bg-card md:block">
-					<nav className="flex flex-col gap-1 p-3">
-						{NAV.map(({ href, label, icon: Icon }) => (
-							<Link
-								key={href}
-								href={href}
-								className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-							>
-								<Icon className="h-4 w-4 shrink-0" />
-								{label}
-							</Link>
-						))}
-
-						<div className="mt-4 border-t pt-4">
-							<div className="px-3 pb-2">
-								<p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Signed in as</p>
-								<p className="mt-1 truncate text-xs font-medium">{session.user?.name}</p>
-								<span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${roleColor}`}>{roleLabel}</span>
+		<RoleProvider role={role} userName={userName}>
+			<div className="min-h-screen bg-background">
+				<header className="sticky top-0 z-40 border-b bg-primary text-primary-foreground shadow-sm">
+					<div className="flex h-14 items-center justify-between px-6">
+						<div className="flex items-center gap-3">
+							<NpcLogo className="h-8 w-8 text-primary-foreground" />
+							<div>
+								<p className="text-sm font-bold leading-none tracking-wide">NPC — QECMS</p>
+								<p className="text-xs opacity-70">Quanby Enterprise Complaints Management</p>
 							</div>
-							<LogoutButton variant="sidebar" />
 						</div>
-					</nav>
-				</aside>
+						<div className="flex items-center gap-3">
+							<div className="flex flex-col items-end">
+								<span className="text-sm font-medium leading-none">{userName}</span>
+								<span className={`mt-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${roleColor}`}>{roleLabel}</span>
+							</div>
+							<LogoutButton />
+						</div>
+					</div>
+				</header>
 
-				<main className="flex-1 p-6">{children}</main>
+				<div className="flex">
+					<aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 border-r bg-card md:block">
+						<nav className="flex flex-col gap-1 p-3">
+							{NAV.map(({ href, label, icon: Icon }) => (
+								<Link
+									key={href}
+									href={href}
+									className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+								>
+									<Icon className="h-4 w-4 shrink-0" />
+									{label}
+								</Link>
+							))}
+
+							<div className="mt-4 border-t pt-4">
+								<div className="px-3 pb-2">
+									<p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Signed in as</p>
+									<p className="mt-1 truncate text-xs font-medium">{userName}</p>
+									<span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${roleColor}`}>{roleLabel}</span>
+								</div>
+								<LogoutButton variant="sidebar" />
+							</div>
+						</nav>
+					</aside>
+
+					<main className="flex-1 p-6">{children}</main>
+				</div>
 			</div>
-		</div>
+		</RoleProvider>
 	)
 }
