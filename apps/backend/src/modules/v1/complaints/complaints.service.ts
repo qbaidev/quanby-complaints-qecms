@@ -82,4 +82,10 @@ export class ComplaintsService {
 		}).returning()
 		return row
 	}
+
+	async remove(id: string) {
+		await db.delete(caseActivities).where(eq(caseActivities.complaintId, id))
+		const [row] = await db.delete(complaints).where(eq(complaints.id, id)).returning()
+		return { deleted: true, id: row?.id }
+	}
 }

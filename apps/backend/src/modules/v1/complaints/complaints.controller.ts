@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Param, Body } from "@nestjs/common"
+import { Controller, Get, Post, Patch, Delete, Param, Body } from "@nestjs/common"
 import { AllowAnonymous } from "@thallesp/nestjs-better-auth"
 import { ComplaintsService } from "./complaints.service"
 
@@ -13,5 +13,6 @@ export class ComplaintsController {
 	@Get(":id/activities") getActivities(@Param("id") id: string) { return this.svc.getActivities(id) }
 	@Post() create(@Body() body: any) { return this.svc.create(body) }
 	@Patch(":id") update(@Param("id") id: string, @Body() body: any) { return this.svc.update(id, body) }
+	@Delete(":id") remove(@Param("id") id: string) { return this.svc.remove(id) }
 	@Post(":id/activities") addActivity(@Param("id") id: string, @Body() body: any) { return this.svc.addActivity(id, body) }
 }

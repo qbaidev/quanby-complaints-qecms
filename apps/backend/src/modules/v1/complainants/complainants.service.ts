@@ -15,4 +15,8 @@ export class ComplainantsService {
 		const [r] = await db.update(complainants).set(data).where(eq(complainants.id, id)).returning()
 		return r
 	}
+	async remove(id: string) {
+		const [r] = await db.delete(complainants).where(eq(complainants.id, id)).returning()
+		return { deleted: true, id: r?.id }
+	}
 }
